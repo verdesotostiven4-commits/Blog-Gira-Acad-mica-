@@ -1,3 +1,5 @@
+if (location.hash === '#guia-sites') history.replaceState(null, '', '#inicio');
+
 const DATA_TEXT = `
 flora|Herbáceo|Alismatales|Araceae|Philodendron ornatum|Filodendro|Sumak Kawsay In Situ
 flora|Arbustivo|Apiales|Araliaceae|Sciodaphyllum sp.|Pata de gallo|Sumak Kawsay In Situ
@@ -77,103 +79,18 @@ const DATA = DATA_TEXT.trim().split('\n').map((line, i) => {
   const [kingdom, group, order, family, scientific, common, site] = line.split('|');
   return { id: i + 1, kingdom, group, order, family, scientific, common, site };
 });
-
-const orderInfo = {
-  Gentianales: 'Orden de angiospermas diverso; en el inventario concentra varios arbustos del sotobosque, especialmente Rubiaceae.',
-  Lamiales: 'Orden de plantas con flores donde se registraron especies ornamentales y de sotobosque húmedo.',
-  Polypodiales: 'Orden de helechos; plantas vasculares sin flores ni semillas que se reproducen mediante esporas.',
-  Anura: 'Orden de anfibios sin cola en etapa adulta; incluye ranas y sapos, muchos asociados a cuerpos de agua y actividad nocturna.',
-  Squamata: 'Orden de reptiles con escamas corporales; agrupa serpientes y lagartijas con hábitos muy variados.',
-  Primates: 'Orden de mamíferos arborícolas o semiarborícolas, con comportamiento social y alta importancia en dispersión de semillas.',
-  Carnivora: 'Orden de mamíferos depredadores u omnívoros, importantes para el equilibrio ecológico.',
-  Psittaciformes: 'Orden de loros y guacamayos; aves carismáticas usadas en educación ambiental y conservación.',
-  Strigiformes: 'Orden de rapaces nocturnas, como búhos y lechuzas, adaptadas a cazar con poca luz.'
-};
-const familyInfo = {
-  Rubiaceae: 'Familia frecuente en bosques tropicales; suele presentar hojas opuestas, flores pequeñas y frutos tipo baya o drupa.',
-  Gesneriaceae: 'Familia de plantas de ambientes húmedos, con flores vistosas y valor ornamental.',
-  Melastomataceae: 'Familia reconocible por hojas simples con nervaduras marcadas; importante en sotobosques tropicales.',
-  Hylidae: 'Familia de ranas arborícolas; muchas poseen discos adhesivos para trepar sobre hojas y ramas.',
-  Dendrobatidae: 'Familia de ranas pequeñas y coloridas; muchas presentan compuestos defensivos y alto valor educativo.',
-  Viperidae: 'Familia de serpientes venenosas, depredadoras importantes dentro de la cadena trófica.',
-  Felidae: 'Familia de felinos silvestres; depredadores clave en los ecosistemas.',
-  Psittacidae: 'Familia de loros y guacamayos, importantes para educación ambiental y conservación.',
-  Callitrichidae: 'Familia de primates pequeños, sociales y arborícolas.',
-  Alligatoridae: 'Familia de caimanes, reptiles semiacuáticos asociados a humedales y ríos.'
-};
-const $ = (s, r = document) => r.querySelector(s);
-const $$ = (s, r = document) => [...r.querySelectorAll(s)];
-const norm = v => (v || '').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-const uniq = arr => [...new Set(arr.filter(Boolean))].sort((a, b) => a.localeCompare(b));
-const groupBy = (arr, key) => arr.reduce((acc, item) => ((acc[item[key]] ??= []).push(item), acc), {});
-const icon = item => item.kingdom === 'flora' ? '🌿' : item.group === 'Amphibia' ? '🐸' : item.group === 'Reptilia' ? '🐍' : item.group === 'Mammalia' ? '🐒' : item.group === 'Aves' ? '🦜' : '🐟';
-
-function routeTo(route) {
-  $$('.view').forEach(v => v.classList.remove('active-view'));
-  $('#' + route)?.classList.add('active-view');
-  $$('.nav a').forEach(a => a.classList.toggle('active', a.dataset.route === route));
-  $('#mainNav').classList.remove('open');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-document.addEventListener('click', e => {
-  const route = e.target.closest('[data-route]');
-  if (route) { e.preventDefault(); routeTo(route.dataset.route); history.replaceState(null, '', '#' + route.dataset.route); }
-  const tab = e.target.closest('[data-gallery]');
-  if (tab) { galleryMode = tab.dataset.gallery; galleryFilter = 'all'; $$('.tab').forEach(t => t.classList.toggle('active', t === tab)); renderGallery(); }
-  const chip = e.target.closest('[data-chip]');
-  if (chip) { galleryFilter = chip.dataset.chip; renderGallery(); }
-});
-$('#menuToggle').onclick = () => $('#mainNav').classList.toggle('open');
-$('#toTop').onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
-window.addEventListener('scroll', () => $('#toTop').classList.toggle('visible', scrollY > 500));
-
-function initHome() {
-  const flora = DATA.filter(x => x.kingdom === 'flora');
-  const fauna = DATA.filter(x => x.kingdom === 'fauna');
-  const metrics = [['Flora', flora.length], ['Fauna', fauna.length], ['Órdenes', uniq(DATA.map(x => x.order)).length], ['Familias', uniq(DATA.map(x => x.family)).length]];
-  $('#metricGrid').innerHTML = metrics.map(([label, value]) => `<div class="metric"><strong>${value}</strong><span>${label}</span></div>`).join('');
-  const methods = ['Cuadrantes anidados para flora', 'Recorridos nocturnos y observación directa', 'Cámaras trampa y trampas Sherman', 'Visita técnica a Bioparque Yanacocha'];
-  $('#methodTimeline').innerHTML = methods.map((m, i) => `<div class="timeline-item"><b>Etapa ${i + 1}</b><p>${m}</p></div>`).join('');
-}
-function fillSelect(id, values) {
-  const el = $(id); const first = el.firstElementChild.outerHTML;
-  el.innerHTML = first + values.map(v => `<option value="${v}">${v}</option>`).join('');
-}
-function speciesCard(item) {
-  return `<article class="species-card"><h4>${icon(item)} ${item.common}</h4><em>${item.scientific}</em><div class="species-meta"><span>${item.group}</span><span>${item.site}</span></div><p>Registro perteneciente a la familia <strong>${item.family}</strong>, dentro del orden <strong>${item.order}</strong>. Esta ficha se usa para organizar la información taxonómica y facilitar la interpretación ambiental.</p></article>`;
-}
-function renderTaxonomy(kind) {
-  const query = norm($('#' + kind + 'Search').value);
-  const filter = $('#' + kind + 'Filter').value;
-  const list = DATA.filter(x => x.kingdom === kind).filter(x => (filter === 'all' || x.group === filter) && norm([x.common, x.scientific, x.order, x.family, x.site, x.group].join(' ')).includes(query));
-  const orders = groupBy(list, 'order');
-  const target = $('#' + kind + 'Taxonomy');
-  const names = Object.keys(orders).sort();
-  if (!names.length) { target.innerHTML = '<div class="empty">No se encontraron resultados.</div>'; return; }
-  target.innerHTML = names.map(order => {
-    const items = orders[order]; const fams = groupBy(items, 'family');
-    const od = orderInfo[order] || `Orden taxonómico registrado en el componente de ${kind}. Agrupa las familias y especies levantadas durante la gira académica.`;
-    return `<article class="taxonomy-card"><header><div><h2>${order}</h2><p>${od}</p></div><span class="pill">${items.length} ficha(s)</span></header><div class="family-grid">${Object.keys(fams).sort().map(fam => `<details class="family-block" open><summary><h3>${fam}</h3><span class="pill">${fams[fam].length}</span></summary><p class="desc">${familyInfo[fam] || `Familia ${fam}: grupo taxonómico registrado durante el inventario. Aquí se ubican las fichas correspondientes para mantener la clasificación ordenada.`}</p><div class="species-list">${fams[fam].map(speciesCard).join('')}</div></details>`).join('')}</div></article>`;
-  }).join('');
-}
-let galleryMode = 'flora', galleryFilter = 'all';
-function renderGalleryFilters() {
-  const groups = uniq(DATA.filter(x => x.kingdom === galleryMode).map(x => x.group));
-  $('#galleryFilters').innerHTML = ['all', ...groups].map(g => `<button class="chip ${galleryFilter === g ? 'active' : ''}" data-chip="${g}">${g === 'all' ? 'Todo' : g}</button>`).join('');
-}
-function renderGallery() {
-  renderGalleryFilters();
-  const list = DATA.filter(x => x.kingdom === galleryMode).filter(x => galleryFilter === 'all' || x.group === galleryFilter);
-  $('#galleryGrid').innerHTML = list.map(x => `<figure class="gallery-card"><div class="gallery-img">${icon(x)}</div><figcaption><h3>${x.common}</h3><em>${x.scientific}</em><small>${x.group} • ${x.family}</small></figcaption></figure>`).join('');
-}
-function init() {
-  initHome();
-  fillSelect('#floraFilter', uniq(DATA.filter(x => x.kingdom === 'flora').map(x => x.group)));
-  fillSelect('#faunaFilter', uniq(DATA.filter(x => x.kingdom === 'fauna').map(x => x.group)));
-  ['flora', 'fauna'].forEach(kind => { $('#' + kind + 'Search').oninput = () => renderTaxonomy(kind); $('#' + kind + 'Filter').onchange = () => renderTaxonomy(kind); renderTaxonomy(kind); });
-  renderGallery();
-  const route = location.hash.replace('#', '') || 'inicio';
-  if ($('#' + route)) routeTo(route);
-}
+const orderInfo={Gentianales:'Orden de angiospermas diverso; en el inventario concentra varios arbustos del sotobosque, especialmente Rubiaceae.',Lamiales:'Orden de plantas con flores donde se registraron especies ornamentales y de sotobosque húmedo.',Polypodiales:'Orden de helechos; plantas vasculares sin flores ni semillas que se reproducen mediante esporas.',Anura:'Orden de anfibios sin cola en etapa adulta; incluye ranas y sapos, muchos asociados a cuerpos de agua y actividad nocturna.',Squamata:'Orden de reptiles con escamas corporales; agrupa serpientes y lagartijas con hábitos muy variados.',Primates:'Orden de mamíferos arborícolas o semiarborícolas, con comportamiento social y alta importancia en dispersión de semillas.',Carnivora:'Orden de mamíferos depredadores u omnívoros, importantes para el equilibrio ecológico.',Psittaciformes:'Orden de loros y guacamayos; aves carismáticas usadas en educación ambiental y conservación.',Strigiformes:'Orden de rapaces nocturnas, como búhos y lechuzas, adaptadas a cazar con poca luz.'};
+const familyInfo={Rubiaceae:'Familia frecuente en bosques tropicales; suele presentar hojas opuestas, flores pequeñas y frutos tipo baya o drupa.',Gesneriaceae:'Familia de plantas de ambientes húmedos, con flores vistosas y valor ornamental.',Melastomataceae:'Familia reconocible por hojas simples con nervaduras marcadas; importante en sotobosques tropicales.',Hylidae:'Familia de ranas arborícolas; muchas poseen discos adhesivos para trepar sobre hojas y ramas.',Dendrobatidae:'Familia de ranas pequeñas y coloridas; muchas presentan compuestos defensivos y alto valor educativo.',Viperidae:'Familia de serpientes venenosas, depredadoras importantes dentro de la cadena trófica.',Felidae:'Familia de felinos silvestres; depredadores clave en los ecosistemas.',Psittacidae:'Familia de loros y guacamayos, importantes para educación ambiental y conservación.',Callitrichidae:'Familia de primates pequeños, sociales y arborícolas.',Alligatoridae:'Familia de caimanes, reptiles semiacuáticos asociados a humedales y ríos.'};
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)], norm=v=>(v||'').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''), uniq=a=>[...new Set(a.filter(Boolean))].sort((x,y)=>x.localeCompare(y)), groupBy=(a,k)=>a.reduce((o,x)=>((o[x[k]]??=[]).push(x),o),{}), icon=x=>x.kingdom==='flora'?'🌿':x.group==='Amphibia'?'🐸':x.group==='Reptilia'?'🐍':x.group==='Mammalia'?'🐒':x.group==='Aves'?'🦜':'🐟';
+function routeTo(route){if(!$('#'+route)||route==='guia-sites')route='inicio';$$('.view').forEach(v=>v.classList.remove('active-view'));$('#'+route).classList.add('active-view');$$('.nav a').forEach(a=>a.classList.toggle('active',a.dataset.route===route));$('#mainNav').classList.remove('open');scrollTo({top:0,behavior:'smooth'});} 
+document.addEventListener('click',e=>{const route=e.target.closest('[data-route]');if(route){e.preventDefault();routeTo(route.dataset.route);history.replaceState(null,'','#'+(route.dataset.route==='guia-sites'?'inicio':route.dataset.route));}const tab=e.target.closest('[data-gallery]');if(tab){galleryMode=tab.dataset.gallery;galleryFilter='all';$$('.tab').forEach(t=>t.classList.toggle('active',t===tab));renderGallery();}const chip=e.target.closest('[data-chip]');if(chip){galleryFilter=chip.dataset.chip;renderGallery();}});
+$('#menuToggle').onclick=()=>$('#mainNav').classList.toggle('open');$('#toTop').onclick=()=>scrollTo({top:0,behavior:'smooth'});addEventListener('scroll',()=>$('#toTop').classList.toggle('visible',scrollY>500));
+function initHome(){const flora=DATA.filter(x=>x.kingdom==='flora'),fauna=DATA.filter(x=>x.kingdom==='fauna');$('#metricGrid').innerHTML=[['Flora',flora.length],['Fauna',fauna.length],['Órdenes',uniq(DATA.map(x=>x.order)).length],['Familias',uniq(DATA.map(x=>x.family)).length]].map(([l,v])=>`<div class="metric"><strong>${v}</strong><span>${l}</span></div>`).join('');$('#methodTimeline').innerHTML=['Cuadrantes anidados para flora','Recorridos nocturnos y observación directa','Cámaras trampa y trampas Sherman','Visita técnica a Bioparque Yanacocha'].map((m,i)=>`<div class="timeline-item"><b>Etapa ${i+1}</b><p>${m}</p></div>`).join('');}
+function fillSelect(id,values){const el=$(id),first=el.firstElementChild.outerHTML;el.innerHTML=first+values.map(v=>`<option value="${v}">${v}</option>`).join('');}
+function speciesCard(x){return `<article class="species-card"><h4>${icon(x)} ${x.common}</h4><em>${x.scientific}</em><div class="species-meta"><span>${x.group}</span><span>${x.site}</span></div><p>Registro perteneciente a la familia <strong>${x.family}</strong>, dentro del orden <strong>${x.order}</strong>. Esta ficha se usa para organizar la información taxonómica y facilitar la interpretación ambiental.</p></article>`;}
+function renderTaxonomy(kind){const q=norm($('#'+kind+'Search').value),f=$('#'+kind+'Filter').value,list=DATA.filter(x=>x.kingdom===kind).filter(x=>(f==='all'||x.group===f)&&norm([x.common,x.scientific,x.order,x.family,x.site,x.group].join(' ')).includes(q)),orders=groupBy(list,'order'),target=$('#'+kind+'Taxonomy'),names=Object.keys(orders).sort();if(!names.length){target.innerHTML='<div class="empty">No se encontraron resultados.</div>';return;}target.innerHTML=names.map(order=>{const items=orders[order],fams=groupBy(items,'family'),od=orderInfo[order]||`Orden taxonómico registrado en el componente de ${kind}. Agrupa las familias y especies levantadas durante la gira académica.`;return `<article class="taxonomy-card"><header><div><h2>${order}</h2><p>${od}</p></div><span class="pill">${items.length} ficha(s)</span></header><div class="family-grid">${Object.keys(fams).sort().map(fam=>`<details class="family-block" open><summary><h3>${fam}</h3><span class="pill">${fams[fam].length}</span></summary><p class="desc">${familyInfo[fam]||`Familia ${fam}: grupo taxonómico registrado durante el inventario. Aquí se ubican las fichas correspondientes para mantener la clasificación ordenada.`}</p><div class="species-list">${fams[fam].map(speciesCard).join('')}</div></details>`).join('')}</div></article>`;}).join('');}
+let galleryMode='flora',galleryFilter='all';
+function renderGalleryFilters(){const groups=uniq(DATA.filter(x=>x.kingdom===galleryMode).map(x=>x.group));$('#galleryFilters').innerHTML=['all',...groups].map(g=>`<button class="chip ${galleryFilter===g?'active':''}" data-chip="${g}">${g==='all'?'Todo':g}</button>`).join('');}
+function renderGallery(){renderGalleryFilters();const list=DATA.filter(x=>x.kingdom===galleryMode).filter(x=>galleryFilter==='all'||x.group===galleryFilter);$('#galleryGrid').innerHTML=list.map(x=>`<figure class="gallery-card"><div class="gallery-img">${icon(x)}</div><figcaption><h3>${x.common}</h3><em>${x.scientific}</em><small>${x.group} • ${x.family}</small></figcaption></figure>`).join('');}
+function init(){initHome();fillSelect('#floraFilter',uniq(DATA.filter(x=>x.kingdom==='flora').map(x=>x.group)));fillSelect('#faunaFilter',uniq(DATA.filter(x=>x.kingdom==='fauna').map(x=>x.group)));['flora','fauna'].forEach(k=>{$('#'+k+'Search').oninput=()=>renderTaxonomy(k);$('#'+k+'Filter').onchange=()=>renderTaxonomy(k);renderTaxonomy(k);});renderGallery();routeTo(location.hash.replace('#','')||'inicio');}
 init();
