@@ -1,0 +1,13 @@
+/* Ajustes finales ESPOCH: solo inicio, sin bloquear el contenido */
+.university-wordmark{display:none!important}
+.has-espoch .topbar{padding-left:clamp(16px,4vw,56px)!important}
+.university-ribbon{display:none;pointer-events:none;left:clamp(18px,5vw,58px);top:76px;width:72px;height:215px;z-index:26;opacity:.88;transform:translateY(-120%);transition:transform .65s cubic-bezier(.16,1,.3,1),opacity .45s ease,filter .45s ease;animation:none!important;filter:drop-shadow(0 15px 22px rgba(116,15,18,.18))}
+body.home-route .university-ribbon{display:block;transform:translateY(0);animation:ribbonIntro .85s cubic-bezier(.16,1,.3,1) both!important}
+body.home-route.ribbon-compact .university-ribbon{transform:translateY(-115%) scale(.92);opacity:0;filter:drop-shadow(0 6px 12px rgba(116,15,18,.08))}
+body.home-route.ribbon-show .university-ribbon{transform:translateY(0);opacity:.88}
+@keyframes ribbonIntro{from{transform:translateY(-130%);opacity:0}to{transform:translateY(0);opacity:.88}}
+body:not(.home-route) .university-ribbon,body:not(.home-route) .university-wordmark{display:none!important}
+.hero{padding-top:54px!important}
+.hero-content{padding-left:0!important}.hero-content:before{display:none!important}
+@media(min-width:980px){body.home-route .hero{padding-left:112px}.university-ribbon{width:76px;height:225px}}
+@media(max-width:860px){.university-ribbon{right:18px!important;left:auto!important;top:88px!important;width:52px!important;height:158px!important;opacity:.55}body.home-route.ribbon-compact .university-ribbon{transform:translateY(-120%) scale(.86);opacity:0}.hero{padding-top:36px!important}body.home-route .hero{padding-left:0}}
