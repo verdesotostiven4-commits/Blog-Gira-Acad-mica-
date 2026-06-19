@@ -4,11 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Blog Académico | Gira de Biodiversidad</title>
-  <meta name="description" content="Blog académico sobre la gira de biodiversidad: flora, fauna, taxonomía, fichas y galería." />
+  <meta name="description" content="Repositorio digital sobre biodiversidad de bosques montanos: flora, fauna, taxonomía, inventarios y galería." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="overrides.css" />
 </head>
 <body>
   <header class="topbar">
@@ -22,7 +23,6 @@
       <a href="#flora" data-route="flora">Flora</a>
       <a href="#fauna" data-route="fauna">Fauna</a>
       <a href="#galeria" data-route="galeria">Galería</a>
-      <a href="#guia-sites" data-route="guia-sites">Guía Google Sites</a>
     </nav>
   </header>
 
@@ -32,7 +32,7 @@
         <div class="hero-content reveal">
           <span class="eyebrow">Proyecto de gira académica 2026</span>
           <h1>Estudio de la biodiversidad de los bosques montanos</h1>
-          <p>Un blog académico interactivo para presentar la flora y fauna registrada en Sumak Kawsay In Situ y Bioparque Yanacocha, con enfoque de interpretación ambiental y turismo sostenible.</p>
+          <p>Repositorio digital de divulgación científica construido a partir de registros de campo, inventarios taxonómicos y experiencias de conservación en Sumak Kawsay In Situ y Bioparque Yanacocha.</p>
           <div class="hero-actions">
             <a class="btn primary" href="#flora" data-route="flora">Explorar flora</a>
             <a class="btn ghost" href="#fauna" data-route="fauna">Explorar fauna</a>
@@ -109,25 +109,10 @@
       <div id="galleryFilters" class="chip-row"></div>
       <div id="galleryGrid" class="gallery-grid"></div>
     </section>
-
-    <section id="guia-sites" class="view">
-      <div class="page-head guide-head">
-        <span class="eyebrow">Entrega en Google Sites</span>
-        <h1>Guía para replicarlo rápido</h1>
-        <p>Usa esta estructura como maqueta guía para construir el sitio exigido en Google Sites sin perder el diseño académico.</p>
-      </div>
-      <div class="guide-grid">
-        <article class="guide-card"><span>1</span><h3>Crear sitio</h3><p>En Google Sites crea un sitio en blanco con tema verde/natural. Usa el nombre: <strong>Blog académico de la gira de biodiversidad</strong>.</p></article>
-        <article class="guide-card"><span>2</span><h3>Páginas principales</h3><p>Crea páginas: Inicio, Flora, Fauna y Galería. Dentro de Flora y Fauna agrega subpáginas por orden y familia.</p></article>
-        <article class="guide-card"><span>3</span><h3>Órdenes y familias</h3><p>En cada orden coloca una descripción breve. En cada familia coloca su característica y debajo inserta las fichas correspondientes.</p></article>
-        <article class="guide-card"><span>4</span><h3>Fichas</h3><p>Puedes insertar las fichas como imagen, PDF o tabla. Lo ideal: ficha resumida en tarjeta + PDF completo como botón.</p></article>
-        <article class="guide-card"><span>5</span><h3>Galería</h3><p>Divide la galería en Flora y Fauna. En Fauna usa bloques por grupo: anfibios, reptiles, mamíferos, aves y peces.</p></article>
-        <article class="guide-card"><span>6</span><h3>Presentación</h3><p>Agrega botones, separadores, carruseles de imágenes y pie de foto con nombre común y científico.</p></article>
-      </div>
-    </section>
   </main>
 
   <button id="toTop" class="to-top" aria-label="Volver arriba">↑</button>
   <script src="app.js"></script>
+  <script src="fixes.js"></script>
 </body>
 </html>
